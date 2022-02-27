@@ -8,7 +8,7 @@
 ---
 
 > Python screen manipulation and automation with pyAutoGUI and OpenCV
-> 
+>  
 > This is a simple boilerplate to get you going.
 
 ## Notes
