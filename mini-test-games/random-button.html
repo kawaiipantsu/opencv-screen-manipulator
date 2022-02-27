@@ -1,0 +1,148 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Test game - Random Button click</title>
+  <meta name="description" content="Test game - Random Button click.">
+  <meta name="author" content="KawaiiPantsu">
+
+  <style>
+      * { box-sizing: border-box; padding: 0px; margin: 0px; }
+      html,body {
+          overflow-y: hidden;
+          overflow-x: hidden;
+        height: 100%;
+        width: 100%;
+      }
+      body {
+        z-index: 10;
+        background-color: rgb(180, 180, 180);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .header {
+          position: relative;
+          z-index: 100;
+          top: 0px;
+          left: 0px;
+          height: 70px;
+          width: 100%;
+          background-color: crimson;
+      }
+      .header .text {
+        font-size: clamp(16px, 3vw, 40px);
+        font-weight: bold;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      #title {
+          float: left;
+        padding-left: 10px;
+        padding-top: 10px;
+      }
+      #stats {
+          float: right;
+        padding-right: 10px;
+        padding-top: 10px;
+      }
+      #reactiontime {
+          display: inline-block;
+          text-align: right;
+      }
+      .btnarea {
+          position: relative;
+          box-sizing: border-box;
+          bottom: 0px;
+          left: 0px;
+          height: calc(100% - 70px);
+          width: 100%;
+          display: inline-block;
+          border: 5px solid rgb(233, 233, 233);
+          z-index: 2000;
+      }
+      .btn {
+        box-sizing: border-box;
+        position: fixed;
+        z-index: 5000;
+        width: 100px;
+        height: 100px;
+        font-weight: bold;
+        border: 4px solid rgb(255, 0, 0);
+        cursor: pointer;
+      }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="header">
+      <div class="text" id="title">Test game - Random Button click(s) <span id="clicks">0</span></div>
+      <div class="text" id="stats">Reactiontime (avg): <span id="reactiontime"></span>ms</div>
+  </div>
+  <div class="btnarea">
+    <button class="btn" id="clickme">CLICK!</button>
+  </div> 
+  
+  <script>
+      let clicks=0;
+      var d = new Date();
+      var t = d.getTime();
+      let lastclick = t;
+      let totalresponsetime = new Array();
+
+      $( document ).ready(function() {
+        $("#clickme").on("click", function() {
+            var d = new Date();
+            var t = d.getTime();
+            var reactiontime = (t - lastclick);
+            lastclick = t;
+            console.log("You clicked me !");
+            clicks++;
+            totalresponsetime.push(reactiontime);
+            $("#clicks").html(clicks);
+
+            var sum = totalresponsetime.reduce((partialSum, a) => partialSum + a, 0);
+            var length = totalresponsetime.length;
+            var avgresponsetime = (sum/length);
+            $("#reactiontime").html(avgresponsetime.toFixed(2));
+            randomPos();
+        }); 
+      });
+
+      function randomPos() {
+        var winWidth = $(".btnarea").width();
+        var winHeight = $(".btnarea").height();
+        randomTop = getRanNum(0, winHeight);
+        randomLeft = getRanNum(0, winWidth);
+
+        if ( (randomLeft+100)>winWidth ) {
+            // overflow - right side (fix!)
+            totw=randomLeft+100;
+            compensate=totw-winWidth;
+            newRandomLeft=randomLeft-compensate;
+            console.log("[RIGHT] New real left px = "+newRandomLeft);
+        } else newRandomLeft = randomLeft;
+
+        if ( (randomTop+100)>winHeight ) {
+            // overflow - right side (fix!)
+            toth=randomTop+100;
+            compensate=toth-winHeight;
+            newRandomTop=randomTop-compensate;
+            console.log("[TOP] New real top px = "+newRandomTop);
+        } else newRandomTop = randomTop;
+
+        console.log("randomPos() - BtnArea="+winWidth+"x"+winHeight+" Random top,left="+randomTop+","+randomLeft)
+        $('.btn').css({
+                top: newRandomTop+'px',
+                left: newRandomLeft+'px',
+                position:'absolute'
+            });
+      }
+
+      function getRanNum(min, max) {
+       return Math.round(Math.random() * (max - min) + min);
+      }
+  </script>
+</body>
+</html>
