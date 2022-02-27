@@ -86,15 +86,17 @@
   
   <script>
       let clicks=0;
-      var d = new Date();
-      var t = d.getTime();
-      let lastclick = t;
+      let lastclick = null;
       let totalresponsetime = new Array();
 
       $( document ).ready(function() {
+
+        randomPos();
+
         $("#clickme").on("click", function() {
             var d = new Date();
             var t = d.getTime();
+            if (!lastclick) lastclick = t;
             var reactiontime = (t - lastclick);
             lastclick = t;
             console.log("You clicked me !");
